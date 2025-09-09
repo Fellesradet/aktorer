@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.4">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000; min-height: 14.0px}
+    span.s1 {font-kerning: none}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
+<p class="p1"><span class="s1">&lt;html&gt;</span></p>
+<p class="p1"><span class="s1">&lt;head&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;meta charset="utf-8" /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;title&gt;Interaktiv karta - Organisationer&lt;/title&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;style&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>#map { height: 95vh; width: 100%; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
+<p class="p1"><span class="s1">&lt;body&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;h2&gt;Interaktiv karta över organisationer&lt;/h2&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;div id="map"&gt;&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;script src="https://unpkg.com/leaflet/dist/leaflet.js"&gt;&lt;/script&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;script&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const map = L.map('map').setView([63.0, 12.0], 6);</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>attribution: '© OpenStreetMap'</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}).addTo(map);</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const data = [</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Samling Näringsliv", lat:63.17917, lon:14.63583, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"IUC Jämtland Härjedalen", lat:63.17917, lon:14.63583, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Handelskammaren Mitt", lat:63.17917, lon:14.63583, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Företagarna", lat:63.17917, lon:14.63583, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Jämtland Härjedalen Turism (JHT)", lat:63.17917, lon:14.63583, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Svenskt Näringsliv Jämtland", lat:63.17917, lon:14.63583, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Nyföretagarcentrum", lat:63.17917, lon:14.63583, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Lantbrukarnas riksorganisation (LRF)", lat:63.17917, lon:14.63583, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Peak Inkubator", lat:63.17917, lon:14.63583, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"NHO Næringslivets Hovedorganisasjon", lat:63.44683, lon:10.42191, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Næringsforeningen i Trondheimsregionen (NiT)", lat:63.44683, lon:10.42191, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Innherred Næringsforening", lat:64.01519, lon:11.49526, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Rørosregionen Næringshage", lat:62.5747, lon:11.3842, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Nasjonalparken Næringshage", lat:62.5747, lon:11.3842, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"FI Næringshage", lat:64.01519, lon:11.49526, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Tindved Kulturhage", lat:64.01519, lon:11.49526, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Næringshagen Hitra og Frøya", lat:63.5453, lon:8.9320, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Blått Kompetansesenter AS", lat:63.44683, lon:10.42191, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Nasjonalparken Næringshage", lat:62.5747, lon:11.3842, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"INAM AS (Innovasjon Namdal)", lat:64.4662, lon:11.4957, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Thams Innovasjon AS", lat:63.44683, lon:10.42191, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Naeringsforeningen i Vaernesregionen", lat:63.4669, lon:11.1863, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Proneo", lat:64.01519, lon:11.49526, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Fremtidens Industri AS (FI)", lat:63.44683, lon:10.42191, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Trøndelag Reiseliv", lat:63.44683, lon:10.42191, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Nordsec (tidigare Midsec)", lat:63.44683, lon:10.42191, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"Industrinavet i Trøndelag", lat:63.44683, lon:10.42191, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"RENERGY – Renewable Energy Cluster", lat:63.44683, lon:10.42191, färg:"red"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Näringsliv", org:"WoodWorks! Cluster", lat:63.44683, lon:10.42191, färg:"red"},</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Offentlig sektor", org:"Statsforvalteren", lat:63.44683, lon:10.42191, färg:"blue"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Offentlig sektor", org:"Helse Midt-Norge RHF", lat:64.01519, lon:11.49526, färg:"blue"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Offentlig sektor", org:"Statens vägvesende", lat:63.44683, lon:10.42191, färg:"blue"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Offentlig sektor", org:"Politi", lat:63.44683, lon:10.42191, färg:"blue"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Offentlig sektor", org:"Tolletaten", lat:63.44683, lon:10.42191, färg:"blue"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Offentlig sektor", org:"NAV", lat:63.44683, lon:10.42191, färg:"blue"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Offentlig sektor", org:"Försvarskoordinatorn Trøndelag", lat:63.44683, lon:10.42191, färg:"blue"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Offentlig sektor", org:"Kommunförbundet Trøndelag", lat:63.44683, lon:10.42191, färg:"blue"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Offentlig sektor", org:"Skatteetaten", lat:63.44683, lon:10.42191, färg:"blue"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Offentlig sektor", org:"Länsstyrelsen", lat:63.17917, lon:14.63583, färg:"blue"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Offentlig sektor", org:"Arbetsförmedlingen", lat:63.17917, lon:14.63583, färg:"blue"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Offentlig sektor", org:"Polisen", lat:63.17917, lon:14.63583, färg:"blue"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Offentlig sektor", org:"Försäkringskassan", lat:63.17917, lon:14.63583, färg:"blue"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Offentlig sektor", org:"Tullverket", lat:63.17917, lon:14.63583, färg:"blue"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Offentlig sektor", org:"Skatteverket", lat:63.17917, lon:14.63583, färg:"blue"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Offentlig sektor", org:"Almi", lat:63.17917, lon:14.63583, färg:"blue"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Offentlig sektor", org:"Kommunförbundet JH", lat:63.17917, lon:14.63583, färg:"blue"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Offentlig sektor", org:"Sametinget", lat:63.17917, lon:14.63583, färg:"blue"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Offentlig sektor", org:"Samverket/Myndighetsnätverket", lat:63.17917, lon:14.63583, färg:"blue"},</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Utbildning", org:"Mittuniversitetet (MIUN)", lat:63.17917, lon:14.63583, färg:"yellow"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Utbildning", org:"Hushållningssällskapet", lat:63.17917, lon:14.63583, färg:"yellow"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Utbildning", org:"Torsta AB", lat:63.0000, lon:14.5000, färg:"yellow"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Utbildning", org:"Norwegian University of Science and Technology NTNU", lat:63.44683, lon:10.42191, färg:"yellow"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Utbildning", org:"NTNU:s Næringslivsringer", lat:63.44683, lon:10.42191, färg:"yellow"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Utbildning", org:"Dronning Mauds Minne Høgskole DMMH", lat:63.44683, lon:10.42191, färg:"yellow"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Utbildning", org:"Nord universitet (Campus Levanger, Steinkjer och Namsos)", lat:63.7464, lon:11.2941, färg:"yellow"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Utbildning", org:"Sintef", lat:63.44683, lon:10.42191, färg:"yellow"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Utbildning", org:"Falstadsenteret", lat:63.6500, lon:11.2833, färg:"yellow"},</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Samarbeten", org:"Gränsräddningsrådet Nordred", lat:59.3293, lon:18.0686, färg:"green"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Samarbeten", org:"Samarbete mellan polisen", lat:61.8230, lon:12.0380, färg:"green"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Samarbeten", org:"Tullsamarbete (Storlien och Vauldalen)", lat:63.3300, lon:12.1167, färg:"green"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Samarbeten", org:"Platform North", lat:63.17917, lon:14.63583, färg:"green"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Samarbeten", org:"Atlantbanan", lat:63.44683, lon:10.42191, färg:"green"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Samarbeten", org:"Föreningen Norden i Östersund", lat:63.17917, lon:14.63583, färg:"green"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Samarbeten", org:"Föreningen Norden i Trondheim", lat:63.44683, lon:10.42191, färg:"green"},</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Finansiering", org:"Interreg Sverige Norge Nordens gröna bälte", lat:63.17917, lon:14.63583, färg:"purple"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Finansiering", org:"Interreg Aurora", lat:65.5848, lon:22.1567, färg:"purple"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Finansiering", org:"Innovation Norge", lat:63.44683, lon:10.42191, färg:"purple"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Finansiering", org:"Leader Grogrund", lat:63.3667, lon:14.5833, färg:"purple"},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{kategori:"Finansiering", org:"Leader 3Sam", lat:62.8333, lon:15.1667, färg:"purple"}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>];</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>data.forEach(d =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>L.circleMarker([d.lat, d.lon], {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>color: d.färg,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>radius: 7,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>fillOpacity: 0.8</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}).bindPopup(`&lt;b&gt;${d.org}&lt;/b&gt;&lt;br&gt;Kategori: ${d.kategori}`).addTo(map);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+</body>
+</html>
