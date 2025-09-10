@@ -2,19 +2,45 @@
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
-<title>Interaktiv karta</title>
+<title>Interaktiv karta med lista, filter och legend</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
 <style>
   body { margin:0; font-family: Arial, sans-serif; display: flex; height: 100vh; }
-  #sidebar { width: 300px; padding: 10px; overflow-y: auto; border-right: 1px solid #ccc; }
+  #sidebar { width: 350px; padding: 10px; overflow-y: auto; border-right: 1px solid #ccc; }
   #map { flex: 1; }
-  .filter-group { margin-bottom: 15px; }
+  .filter-group { margin-bottom: 10px; }
+  .category { font-weight: bold; margin-top: 10px; cursor: pointer; }
+  .org-list { list-style: none; padding-left: 15px; }
+  .org-list li { cursor: pointer; margin: 3px 0; display: flex; align-items: center; }
+  .org-list li:hover { text-decoration: underline; color: #007BFF; }
+  .color-box { width: 12px; height: 12px; display: inline-block; margin-right: 6px; }
+  .legend { background: white; padding: 6px 10px; line-height: 18px; color: #555; }
+  .legend span { display: inline-block; width: 12px; height: 12px; margin-right: 6px; }
+  input[type="text"], select { width: 100%; padding: 4px; margin-top: 2px; margin-bottom: 6px; box-sizing: border-box; }
 </style>
 </head>
 <body>
 
 <div id="sidebar">
-  <h3>Filtrera organisationer</h3>
+  <h3>Organisationer</h3>
+  
+  <div class="filter-group">
+    <label>Sök organisation:</label>
+    <input type="text" id="searchInput" placeholder="Skriv namn eller kategori...">
+  </div>
+  
+  <div class="filter-group">
+    <label>Region:</label>
+    <select id="regionFilter">
+      <option value="">Alla</option>
+      <option value="Jämtland">Jämtland</option>
+      <option value="Trøndelag">Trøndelag</option>
+      <option value="Övrigt">Övrigt</option>
+    </select>
+  </div>
+  
   <div class="filter-group">
     <label>Kategori:</label>
     <select id="categoryFilter">
@@ -25,87 +51,152 @@
       <option value="Samarbeten/Nätverk">Samarbeten/Nätverk</option>
       <option value="Kultur">Kultur</option>
       <option value="Sport">Sport</option>
+      <option value="Finansiering">Finansiering</option>
     </select>
   </div>
-  <div class="filter-group">
-    <label>Region:</label>
-    <select id="regionFilter">
-      <option value="">Alla</option>
-      <option value="Jämtland">Jämtland</option>
-      <option value="Trøndelag">Trøndelag</option>
-      <option value="Övrigt">Övrigt</option>
-    </select>
-  </div>
+
+  <div id="orgContainer"></div>
 </div>
 
 <div id="map"></div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 <script>
-  const data = [
-    { namn: "Samling Näringsliv", kategori: "Näringsliv", region: "Jämtland", lat: 63.17917, lon: 14.63583, färg: "red" },
-    { namn: "IUC Jämtland Härjedalen", kategori: "Näringsliv", region: "Jämtland", lat: 63.17917, lon: 14.63583, färg: "red" },
-    { namn: "NHO Næringslivets Hovedorganisasjon", kategori: "Näringsliv", region: "Trøndelag", lat: 63.44683, lon: 10.42191, färg: "red" },
-    { namn: "Næringsforeningen i Trondheimsregionen (NiT)", kategori: "Näringsliv", region: "Trøndelag", lat: 63.44683, lon: 10.42191, färg: "red" },
-    { namn: "Statsforvalteren", kategori: "Offentlig sektor", region: "Trøndelag", lat: 63.44683, lon: 10.42191, färg: "blue" },
-    { namn: "Helse Midt-Norge RHF", kategori: "Offentlig sektor", region: "Trøndelag", lat: 64.01519, lon: 11.49526, färg: "blue" },
-    { namn: "Länsstyrelsen", kategori: "Offentlig sektor", region: "Jämtland", lat: 63.17917, lon: 14.63583, färg: "blue" },
-    { namn: "Arbetsförmedlingen", kategori: "Offentlig sektor", region: "Jämtland", lat: 63.17917, lon: 14.63583, färg: "blue" },
-    { namn: "Mittuniversitetet (MIUN)", kategori: "Utbildning", region: "Jämtland", lat: 63.17917, lon: 14.63583, färg: "yellow" },
-    { namn: "Hushållningssällskapet", kategori: "Utbildning", region: "Jämtland", lat: 63.17917, lon: 14.63583, färg: "yellow" },
-    { namn: "Norwegian University of Science and Technology NTNU", kategori: "Utbildning", region: "Trøndelag", lat: 63.44683, lon: 10.42191, färg: "yellow" },
-    { namn: "NTNU:s Næringslivsringer", kategori: "Utbildning", region: "Trøndelag", lat: 63.44683, lon: 10.42191, färg: "yellow" },
-    { namn: "Gränsräddningsrådet Nordred", kategori: "Samarbeten/Nätverk", region: "Jämtland", lat: 59.3293, lon: 18.0686, färg: "green" },
-    { namn: "Samarbete mellan polisen", kategori: "Samarbeten/Nätverk", region: "Trøndelag", lat: 61.8230, lon: 12.0380, färg: "green" },
-    { namn: "Interreg Sverige Norge Nordens gröna bälte", kategori: "Samarbeten/Nätverk", region: "Jämtland", lat: 63.17917, lon: 14.63583, färg: "purple" },
-    { namn: "Interreg Aurora", kategori: "Samarbeten/Nätverk", region: "Jämtland", lat: 65.5848, lon: 22.1567, färg: "purple" },
-    { namn: "Bærekraftsnettverket i Trøndelag", kategori: "Samarbeten/Nätverk", region: "Trøndelag", lat: 63.44683, lon: 10.42191, färg: "purple" },
-    { namn: "Work in Trondheim", kategori: "Samarbeten/Nätverk", region: "Trøndelag", lat: 63.44683, lon: 10.42191, färg: "purple" },
-    { namn: "Trøndelag Kulturkrets", kategori: "Kultur", region: "Trøndelag", lat: 63.44683, lon: 10.42191, färg: "orange" },
-    { namn: "Kulturkontakt Trondheim", kategori: "Kultur", region: "Trøndelag", lat: 63.44683, lon: 10.42191, färg: "orange" },
-    { namn: "Gaaltije", kategori: "Kultur", region: "Jämtland", lat: 63.17917, lon: 14.63583, färg: "orange" },
-    { namn: "Jamtli", kategori: "Kultur", region: "Jämtland", lat: 63.17917, lon: 14.63583, färg: "orange" },
-    { namn: "Grensetjänsten", kategori: "Samarbeten/Nätverk", region: "Jämtland", lat: 59.9500, lon: 11.5000, färg: "green" },
-    { namn: "Business Sweden", kategori: "Samarbeten/Nätverk", region: "Jämtland", lat: 59.3293, lon: 18.0686, färg: "green" },
-    { namn: "Nordiska ministerrådet", kategori: "Samarbeten/Nätverk", region: "Övrigt", lat: 55.6761, lon: 12.5683, färg: "green" },
-    { namn: "Nordiska rådet", kategori: "Samarbeten/Nätverk", region: "Övrigt", lat: 55.6761, lon: 12.5683, färg: "green" },
-    { namn: "Elden", kategori: "Kultur", region: "Trøndelag", lat: 2.5747, lon: 11.3842, färg: "orange" },
-    { namn: "Rørosmartnan", kategori: "Kultur", region: "Trøndelag", lat: 2.5747, lon: 11.3842, färg: "orange" },
-    { namn: "Funäs Festival", kategori: "Kultur", region: "Jämtland", lat: 62.5667, lon: 12.5000, färg: "orange" },
-    { namn: "Jamtli Vårmarknad", kategori: "Kultur", region: "Jämtland", lat: 63.17917, lon: 14.63583, färg: "orange" },
-    { namn: "Meråkerrennet", kategori: "Sport", region: "Trøndelag", lat: 63.1833, lon: 11.4333, färg: "orange" },
-    { namn: "Norgescup Skiskyting", kategori: "Sport", region: "Trøndelag", lat: 63.1833, lon: 11.4333, färg: "orange" },
-    { namn: "Storsjöcupen", kategori: "Sport", region: "Jämtland", lat: 63.17917, lon: 14.63583, färg: "orange" },
-    { namn: "Bruksvallsloppet", kategori: "Sport", region: "Jämtland", lat: 62.6167, lon: 12.6167, färg: "orange" }
-  ];
+const data = [
+  { namn: "Samling Näringsliv", kategori: "Näringsliv", region: "Jämtland", lat: 63.17917, lon: 14.63583, färg: "red" },
+  { namn: "IUC Jämtland Härjedalen", kategori: "Näringsliv", region: "Jämtland", lat: 63.17917, lon: 14.63583, färg: "red" },
+  { namn: "NHO Næringslivets Hovedorganisasjon", kategori: "Näringsliv", region: "Trøndelag", lat: 63.44683, lon: 10.42191, färg: "red" },
+  { namn: "Næringsforeningen i Trondheimsregionen (NiT)", kategori: "Näringsliv", region: "Trøndelag", lat: 63.44683, lon: 10.42191, färg: "red" },
+  { namn: "Statsforvalteren", kategori: "Offentlig sektor", region: "Trøndelag", lat: 63.44683, lon: 10.42191, färg: "blue" },
+  { namn: "Helse Midt-Norge RHF", kategori: "Offentlig sektor", region: "Trøndelag", lat: 64.01519, lon: 11.49526, färg: "blue" },
+  { namn: "Länsstyrelsen", kategori: "Offentlig sektor", region: "Jämtland", lat: 63.17917, lon: 14.63583, färg: "blue" },
+  { namn: "Arbetsförmedlingen", kategori: "Offentlig sektor", region: "Jämtland", lat: 63.17917, lon: 14.63583, färg: "blue" },
+  { namn: "Mittuniversitetet (MIUN)", kategori: "Utbildning", region: "Jämtland", lat: 63.17917, lon: 14.63583, färg: "yellow" },
+  { namn: "Hushållningssällskapet", kategori: "Utbildning", region: "Jämtland", lat: 63.17917, lon: 14.63583, färg: "yellow" },
+  { namn: "Norwegian University of Science and Technology NTNU", kategori: "Utbildning", region: "Trøndelag", lat: 63.44683, lon: 10.42191, färg: "yellow" },
+  { namn: "NTNU:s Næringslivsringer", kategori: "Utbildning", region: "Trøndelag", lat: 63.44683, lon: 10.42191, färg: "yellow" },
+  { namn: "Gränsräddningsrådet Nordred", kategori: "Samarbeten/Nätverk", region: "Jämtland", lat: 59.3293, lon: 18.0686, färg: "green" },
+  { namn: "Samarbete mellan polisen", kategori: "Samarbeten/Nätverk", region: "Trøndelag", lat: 61.8230, lon: 12.0380, färg: "green" },
+  { namn: "Interreg Sverige Norge Nordens gröna bälte", kategori: "Samarbeten/Nätverk", region: "Jämtland", lat: 63.17917, lon: 14.63583, färg: "purple" },
+  { namn: "Interreg Aurora", kategori: "Samarbeten/Nätverk", region: "Jämtland", lat: 65.5848, lon: 22.1567, färg: "purple" },
+  { namn: "Bærekraftsnettverket i Trøndelag", kategori: "Samarbeten/Nätverk", region: "Trøndelag", lat: 63.44683, lon: 10.42191, färg: "purple" },
+  { namn: "Work in Trondheim", kategori: "Samarbeten/Nätverk", region: "Trøndelag", lat: 63.44683, lon: 10.42191, färg: "purple" },
+  { namn: "Trøndelag Kulturkrets", kategori: "Kultur", region: "Trøndelag", lat: 63.44683, lon: 10.42191, färg: "orange" },
+  { namn: "Kulturkontakt Trondheim", kategori: "Kultur", region: "Trøndelag", lat: 63.44683, lon: 10.42191, färg: "orange" },
+  { namn: "Gaaltije", kategori: "Kultur", region: "Jämtland", lat: 63.17917, lon: 14.63583, färg: "orange" },
+  { namn: "Jamtli", kategori: "Kultur", region: "Jämtland", lat: 63.17917, lon: 14.63583, färg: "orange" },
+  { namn: "Grensetjänsten", kategori: "Samarbeten/Nätverk", region: "Jämtland", lat: 59.9500, lon: 11.5000, färg: "green" },
+  { namn: "Business Sweden", kategori: "Samarbeten/Nätverk", region: "Jämtland", lat: 59.3293, lon: 18.0686, färg: "green" },
+  { namn: "Nordiska ministerrådet", kategori: "Samarbeten/Nätverk", region: "Övrigt", lat: 55.6761, lon: 12.5683, färg: "green" },
+  { namn: "Nordiska rådet", kategori: "Samarbeten/Nätverk", region: "Övrigt", lat: 55.6761, lon: 12.5683, färg: "green" },
+  { namn: "Elden", kategori: "Kultur", region: "Trøndelag", lat: 2.5747, lon: 11.3842, färg: "orange" },
+  { namn: "Rørosmartnan", kategori: "Kultur", region: "Trøndelag", lat: 2.5747, lon: 11.3842, färg: "orange" },
+  { namn: "Funäs Festival", kategori: "Kultur", region: "Jämtland", lat: 62.5667, lon: 12.5000, färg: "orange" },
+  { namn: "Jamtli Vårmarknad", kategori: "Kultur", region: "Jämtland", lat: 63.17917, lon: 14.63583, färg: "orange" },
+  { namn: "Meråkerrennet", kategori: "Sport", region: "Trøndelag", lat: 63.1833, lon: 11.4333, färg: "orange" },
+  { namn: "Norgescup Skiskyting", kategori: "Sport", region: "Trøndelag", lat: 63.1833, lon: 11.4333, färg: "orange" },
+  { namn: "Storsjöcupen", kategori: "Sport", region: "Jämtland", lat: 63.17917, lon: 14.63583, färg: "orange" },
+  { namn: "Bruksvallsloppet", kategori: "Sport", region: "Jämtland", lat: 62.6167, lon: 12.6167, färg: "orange" }
+];
 
-  // Skapa karta
-  const map = L.map('map').setView([63.17917, 14.63583], 6);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+// Skapa karta
+const map = L.map('map').setView([63.17917, 14.63583], 6);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
 
-  // Markörer
-  let markers = [];
-  function addMarkers(filteredData) {
-    markers.forEach(m => map.removeLayer(m));
-    markers = filteredData.map(d => {
-      const marker = L.circleMarker([d.lat, d.lon], { color: d.färg, radius: 8 }).addTo(map);
-      marker.bindPopup(`<b>${d.namn}</b><br>${d.kategori}<br>${d.region}`);
-      return marker;
+// Marker-kluster
+let markerCluster = L.markerClusterGroup().addTo(map);
+
+// Skapa markörer
+let markers = [];
+function addMarkers(filteredData) {
+  markerCluster.clearLayers();
+  markers = filteredData.map(d => {
+    const marker = L.circleMarker([d.lat, d.lon], { color: d.färg, radius: 8 });
+    marker.bindPopup(`<b>${d.namn}</b><br>${d.kategori}<br>${d.region}`);
+    markerCluster.addLayer(marker);
+    return { data: d, marker: marker };
+  });
+}
+
+// Skapa lista med färgboxar och kategorier expanderade
+function createList(filteredData) {
+  const container = document.getElementById('orgContainer');
+  container.innerHTML = '';
+  const grouped = {};
+  filteredData.forEach(d => {
+    if (!grouped[d.kategori]) grouped[d.kategori] = [];
+    grouped[d.kategori].push(d);
+  });
+  for (let cat in grouped) {
+    const catDiv = document.createElement('div');
+    catDiv.className = 'category';
+    catDiv.textContent = cat;
+    const ul = document.createElement('ul');
+    ul.className = 'org-list';
+    ul.style.display = 'block'; // expanderad som default
+    grouped[cat].forEach(org => {
+      const li = document.createElement('li');
+      const colorBox = document.createElement('span');
+      colorBox.className = 'color-box';
+      colorBox.style.background = org.färg;
+      li.appendChild(colorBox);
+      li.appendChild(document.createTextNode(org.namn));
+      li.onclick = () => {
+        const m = markers.find(x => x.data === org);
+        map.setView([org.lat, org.lon], 10);
+        m.marker.openPopup();
+      };
+      ul.appendChild(li);
     });
+    catDiv.onclick = () => { ul.style.display = ul.style.display === 'none' ? 'block' : 'none'; };
+    container.appendChild(catDiv);
+    container.appendChild(ul);
   }
+}
 
-  addMarkers(data);
+// Initial render
+addMarkers(data);
+createList(data);
 
-  // Filtrering
-  document.getElementById('categoryFilter').addEventListener('change', updateFilters);
-  document.getElementById('regionFilter').addEventListener('change', updateFilters);
+// Filtrering
+function updateFilters() {
+  const region = document.getElementById('regionFilter').value;
+  const category = document.getElementById('categoryFilter').value.toLowerCase();
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const filtered = data.filter(d => 
+    (region === "" || d.region === region) &&
+    (category === "" || d.kategori.toLowerCase() === category) &&
+    (d.namn.toLowerCase().includes(search) || d.kategori.toLowerCase().includes(search))
+  );
+  addMarkers(filtered);
+  createList(filtered);
+}
 
-  function updateFilters() {
-    const category = document.getElementById('categoryFilter').value;
-    const region = document.getElementById('regionFilter').value;
-    const filtered = data.filter(d => (category === "" || d.kategori === category) && (region === "" || d.region === region));
-    addMarkers(filtered);
+document.getElementById('regionFilter').addEventListener('change', updateFilters);
+document.getElementById('categoryFilter').addEventListener('change', updateFilters);
+document.getElementById('searchInput').addEventListener('input', updateFilters);
+
+// Legend
+const legend = L.control({ position: 'bottomright' });
+legend.onAdd = function(map) {
+  const div = L.DomUtil.create('div', 'legend');
+  div.innerHTML += '<b>Färgkod</b><br>';
+  const categories = {
+    "Näringsliv": "red",
+    "Offentlig sektor": "blue",
+    "Utbildning": "yellow",
+    "Samarbeten/Nätverk": "green",
+    "Kultur": "orange",
+    "Sport": "orange",
+    "Finansiering": "purple"
+  };
+  for (let cat in categories) {
+    div.innerHTML += `<span style="background:${categories[cat]}"></span>${cat}<br>`;
   }
+  return div;
+};
+legend.addTo(map);
 </script>
 
 </body>
